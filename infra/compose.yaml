@@ -2,7 +2,7 @@ services:
   postgres-db:
     container_name: postgres-db
     image: postgres:16.0-alpine3.18
-    environment:
-      POSTGRES_PASSWORD: 'root'
+    env_file:
+      - ../.env.development
     ports:
       - "5432:5432"
