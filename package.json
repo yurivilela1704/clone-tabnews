@@ -1,10 +1,10 @@
 {
   "name": "clone-tabnews",
   "version": "1.0.0",
-  "description": "",
+  "description": "Cloning https://www.tabnews.com with Next.js and PostgreSQL on WSL2 following the https://www.curso.dev",
   "main": "index.js",
   "scripts": {
-    "dev": "next dev",
+    "dev": "npm run services:up && next dev",
     "build": "next build",
     "start": "next start",
     "next-lint": "next lint",
@@ -12,7 +12,9 @@
     "prettier:write": "prettier --write .",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:all": "jest --watchAll"
+    "test:all": "jest --watchAll",
+    "services:up": "docker-compose -f infra/compose.yaml up -d",
+    "services:down": "docker-compose -f infra/compose.yaml down"
   },
   "author": "",
   "license": "MIT",
