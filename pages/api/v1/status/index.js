@@ -1,14 +1,16 @@
-import database from "infra/database.js"
+import { getDatabaseStatus } from "infra/pool.js"
 
 async function status (request, response) {
-  const result = await database.query("SELECT NOW()")
+  const updatedAt = new Date().toISOString()
 
-  if (result.rows.length === 0) {
-    response.status(500).json({ "status": "error" })
-    return
-  }
+  const settings = await getDatabaseStatus()
 
-  response.status(200).json({ "status": "ok" })
+  response.status(200).json({
+    "update_at": updatedAt,
+    dependencies: {
+      "database": settings,
+    }
+  })
 }
 
 export default status
