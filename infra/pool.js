@@ -1,12 +1,23 @@
 import { Pool } from "pg"
 
-const pool = new Pool({
-  host: process.env.POSTGRES_HOST,
-  port: Number(process.env.POSTGRES_PORT),
-  user: process.env.POSTGRES_USER,
-  password: process.env.POSTGRES_PASSWORD,
-  database: process.env.POSTGRES_DB,
-})
+// Create the pool with error handling
+let pool
+try {
+  pool = new Pool({
+    host: process.env.POSTGRES_HOST,
+    port: Number(process.env.POSTGRES_PORT),
+    user: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    database: process.env.POSTGRES_DB,
+  })
+} catch (error) {
+  console.error("Failed to initialize database pool:", error.message)
+  pool = {
+    query: async () => {
+      throw new Error("Database connection not initialized")
+    }
+  }
+}
 
 /**
  * Executes a database query safely with error handling
@@ -28,8 +39,13 @@ async function executeQuery (query) {
  * @returns {Promise<Date|null>} Current database timestamp or null if unavailable
  */
 async function isDatabaseConnected () {
-  const result = await executeQuery("SELECT NOW()")
-  return result?.rows[0]?.now || null
+  try {
+    const result = await executeQuery("SELECT NOW()")
+    return result?.rows[0]?.now || null
+  } catch (error) {
+    console.error("Database connection check failed:", error.message)
+    return null
+  }
 }
 
 /**
