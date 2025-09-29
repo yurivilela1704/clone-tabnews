@@ -9,6 +9,12 @@ try {
     user: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DB,
+    max: 20,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 2000,
+    maxLifetimeSeconds: 60,
+    ssl: process.env.NODE_ENV === "production",
+    enableChannelBinding: process.env.NODE_ENV === "production",
   })
 } catch (error) {
   console.error("Failed to initialize database pool:", error.message)

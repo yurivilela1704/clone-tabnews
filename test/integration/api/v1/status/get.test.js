@@ -3,12 +3,13 @@ test("test DB status", async () => {
   expect(response.status).toBe(200)
 
   const responseBody = await response.json()
-  expect(responseBody.update_at).toBeDefined()
+  expect(responseBody.updated_at).toBeDefined()
 
-  const parsedDate = new Date(responseBody.update_at).toISOString()
-  expect(responseBody.update_at).toBe(parsedDate)
+  const parsedDate = new Date(responseBody.updated_at).toISOString()
+  expect(responseBody.updated_at).toBe(parsedDate)
 
   const databaseStatus = responseBody.dependencies.database
+  console.log(databaseStatus)
   expect(databaseStatus).toBeDefined()
   expect(databaseStatus.status).toBeDefined()
   expect(databaseStatus.max_connections).toBeDefined()
@@ -16,3 +17,4 @@ test("test DB status", async () => {
   expect(databaseStatus.opened_connections).toBeDefined()
   expect(databaseStatus.version).toBe("16.0")
 })
+
