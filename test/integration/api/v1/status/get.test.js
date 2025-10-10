@@ -9,7 +9,7 @@ test("test DB status", async () => {
   expect(responseBody.updated_at).toBe(parsedDate)
 
   const databaseStatus = responseBody.dependencies.database
-  console.log(databaseStatus)
+
   expect(databaseStatus).toBeDefined()
   expect(databaseStatus.status).toBeDefined()
   expect(databaseStatus.max_connections).toBeDefined()
