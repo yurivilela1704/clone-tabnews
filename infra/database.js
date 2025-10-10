@@ -1,21 +1,43 @@
-import { Client } from "pg"
+import {Client} from "pg";
 
-async function query (queryObject) {
-  const client = new Client({
-    host: process.env.POSTGRES_HOST,
-    port: process.env.POSTGRES_PORT,
-    user: process.env.POSTGRES_USER,
-    password: process.env.POSTGRES_PASSWORD,
-    database: process.env.POSTGRES_DB,
-  })
+// Extracted configuration constant
+const DB_CONFIG = {
+  host: process.env.POSTGRES_HOST,
+  port: process.env.POSTGRES_PORT,
+  user: process.env.POSTGRES_USER,
+  database: process.env.POSTGRES_DB,
+  password: process.env.POSTGRES_PASSWORD,
+  ssl: process.env.NODE_ENV === "production",
+  enableChannelBinding: process.env.NODE_ENV === "production",
+};
 
-  await client.connect()
-  const result = await client.query(queryObject)
-  await client.end()
+function createDbClient() {
+  return new Client(DB_CONFIG);
+}
 
-  return result
+async function getConnectedClient() {
+  const client = createDbClient();
+
+  await client.connect();
+
+  return client;
+}
+
+async function query(queryConfig) {
+  let client;
+  try {
+    client = await getConnectedClient();
+
+    return await client.query(queryConfig);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  } finally {
+    await client.end();
+  }
 }
 
 export default {
-  query: query,
-}
+  query,
+  getConnectedClient
+};
